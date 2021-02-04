@@ -4,6 +4,7 @@ import (
 	"hash/fnv"
 	"net"
 	"os"
+	"time"
 
 	"github.com/costela/wesher/common"
 	"github.com/pkg/errors"
@@ -139,6 +140,8 @@ func (s *State) SetUpInterface(nodes []common.Node) error {
 	return nil
 }
 
+func durPtr(d time.Duration) *time.Duration { return &d }
+
 func (s *State) nodesToPeerConfigs(nodes []common.Node) ([]wgtypes.PeerConfig, error) {
 	peerCfgs := make([]wgtypes.PeerConfig, len(nodes))
 	for i, node := range nodes {
@@ -156,6 +159,7 @@ func (s *State) nodesToPeerConfigs(nodes []common.Node) ([]wgtypes.PeerConfig, e
 			AllowedIPs: []net.IPNet{
 				node.OverlayAddr,
 			},
+			PersistentKeepaliveInterval: durPtr(time.Second * 10),
 		}
 	}
 	return peerCfgs, nil
